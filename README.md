@@ -60,7 +60,7 @@ To install the project, follow these steps:
 - Scan the QR code with the Expo Go app on your mobile device.
 - Alternatively, you can run the app on an Android/iOS emulator or simulator.
 
-## Issues Encountered
+## Issues Encountered / Features to consider
 
 1. The Graphql API don't have dedicated search row for pokemon, it make more difficult to create a 'deep search'
 2. Given design is more likely for web then for app, due to the small font sizes, that don't look good on mobile app
@@ -68,6 +68,7 @@ To install the project, follow these steps:
 4. No eslint and/or prettier, so syntax don't look as nice.
 5. Inner pokemon page have Arrows right and left, in future they good change pokemon from the db, instead of going back to main list.
 6. Skeleton loader could be added to inner pokemon page.
+7. Splash screen and adaptive icon to be checked, because app developed via expo go only. So pre-build for android and ios would be beneficial.
 
 ## Contributing
 
