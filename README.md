@@ -1,50 +1,88 @@
-# Welcome to your Expo app 👋
+# Zalgiris Pokedex
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Project Description
 
-## Get started
+Zalgiris Pokedex is a web application that allows users to browse and search for Pokémon. It provides detailed information about each Pokémon, including their stats, abilities, and types.
 
-1. Install dependencies
+## Features
+
+- Pokémon List: Browse a list of Pokémon with their names and images.
+- Infinite Scroll: Load more Pokémon as you scroll down the list.
+- Sorting: Sort the Pokémon list by name or other criteria.
+- Pokémon Details: View detailed information about each Pokémon, including:
+  Name
+  Image
+  Types
+  Abilities
+  Stats (HP, Attack, Defense, Special Attack, Special Defense, Speed)
+
+- Search/Filtering: Search for Pokémon by name or filter by type (optional bonus feature).
+- Error Handling: Gracefully handle network issues or API errors.
+- Responsive Design: The app is designed to work well on different screen sizes.
+
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- You have installed [Node.js](https://nodejs.org/) (version 14 or later)
+- You have installed [npm](https://www.npmjs.com/) (version 6 or later)
+- You have installed Expo CLI globally:
+  ```bash
+  npm install -g expo-cli
+  ```
+
+## Installation
+
+To install the project, follow these steps:
+
+1. Clone the repository:
 
    ```bash
+   git clone https://github.com/rasimka90/pokedex
+   ```
+
+2. Navigate to the project directory:
+
+3. Install the dependencies:
+   ```bash
+   yarn install
+   # or
    npm install
    ```
-
-2. Start the app
+4. Start the development server:
 
    ```bash
-    npx expo start
+   expo start
    ```
 
-In the output, you'll find options to open the app in a
+5. Run the app:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Scan the QR code with the Expo Go app on your mobile device.
+- Alternatively, you can run the app on an Android/iOS emulator or simulator.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## Issues Encountered
 
-## Get a fresh project
+1. The Graphql API don't have dedicated search row for pokemon, it make more difficult to create a 'deep search'
+2. Given design is more likely for web then for app, due to the small font sizes, that don't look good on mobile app
+3. App could be divided in further component for better maintaining.
+4. No eslint and/or prettier, so syntax don't look as nice.
+5. Inner pokemon page have Arrows right and left, in future they good change pokemon from the db, instead of going back to main list.
+6. Skeleton loader could be added to inner pokemon page.
 
-When you're ready, run:
+## Contributing
 
-```bash
-npm run reset-project
-```
+If you want to contribute to this project, please follow these steps:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/your-feature`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a Pull Request.
 
-## Learn more
+## License
 
-To learn more about developing your project with Expo, look at the following resources:
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Contact
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+If you have any questions or suggestions, feel free to contact me at.
