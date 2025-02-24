@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+import { View, TextInput, StyleSheet } from 'react-native';
 import { SearchIcon } from '@/utils/icons/SearchIcon';
 import { debounce } from 'lodash';
 import { textVariants } from '@/utils/styles/TextVariants';
@@ -16,7 +16,7 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
   useEffect(() => {
     debouncedSearch(query);
     return () => debouncedSearch.cancel();
-  }, [query]);
+  }, [query, debouncedSearch]);
 
   return (
     <View style={styles.container}>

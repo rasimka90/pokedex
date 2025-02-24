@@ -1,5 +1,5 @@
 // app/pokemon/[id].tsx
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import { GET_POKEMON_DETAILS } from '@/graphql/gql-documents';

@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { View, Text, Pressable, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useState, useCallback, useMemo, useRef } from 'react';
 
 import { GET_POKEMONS } from "@/graphql/gql-documents";
@@ -12,7 +12,7 @@ import { PokeBallIcon } from "@/utils/icons/PokeBallIcon";
 import { debounce } from 'lodash';
 import { SearchBar } from "@/components/SearchBar";
 import { PokemonList } from "@/components/PokemonList";
-import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { SortIcon } from "@/utils/icons/SortIcon";
 import { TagIcon } from "@/utils/icons/TagIcon";
 import { LetterIcon } from "@/utils/icons/LetterIcon";
@@ -32,7 +32,6 @@ export default function HomeScreen() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   const snapPoints = useMemo(() => ['30%'], []);
-
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const toggleBottomSheet = useCallback(() => {
@@ -70,14 +69,7 @@ export default function HomeScreen() {
     notifyOnNetworkStatusChange: true,
   });
 
-  if (error) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text>Error loading Pokémon. Please try again.</Text>
-      </View>
-    );
-  }
-
+  // Move these callbacks and memoized values outside of the conditional
   const filteredAndSortedPokemon = useMemo(() => {
     if (!data?.getAllPokemon) return [];
 
@@ -118,6 +110,14 @@ export default function HomeScreen() {
     refetch();
   }, [refetch]);
 
+  // Return error state after all hooks have been called
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text>Error loading Pokémon. Please try again.</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#DC2626' }}>
       <View style={styles.container}>

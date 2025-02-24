@@ -30,6 +30,8 @@ const PokemonCard = memo(({ pokemon }: PokemonCardProps) => {
   );
 });
 
+PokemonCard.displayName = 'PokemonCard';
+
 const styles = StyleSheet.create({
   container: {
     width: 104,
