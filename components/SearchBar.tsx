@@ -11,12 +11,19 @@ type SearchBarProps = {
 export const SearchBar = ({ onSearch }: SearchBarProps) => {
   const [query, setQuery] = useState('');
 
-  const debouncedSearch = debounce(onSearch, 300);
+  // The debounce function is created outside of the useEffect hook,
+  // which means it's created on every render of the component.
+  // However, it is used as a dependancy in the useEffect hook. This can lead to unexpected behaviors.
+  // More here: https://medium.com/@gabrielmickey28/using-debounce-with-react-components-f988c28f52c1#:~:text=Debounce%20lets%20us%20make%20multiple,the%20last%20call%20was%20made.
 
+  // Would be even better to use useCallback here and write a custom hook for this
   useEffect(() => {
+    const debouncedSearch = debounce(onSearch, 300);
     debouncedSearch(query);
-    return () => debouncedSearch.cancel();
-  }, [query, debouncedSearch]);
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [query, onSearch]);
 
   return (
     <View style={styles.container}>
@@ -29,7 +36,6 @@ export const SearchBar = ({ onSearch }: SearchBarProps) => {
           onChangeText={setQuery}
         />
       </View>
-
     </View>
   );
 };
@@ -66,6 +72,5 @@ const styles = StyleSheet.create({
   buttonText: {
     ...textVariants.bodyBody3,
     color: '#666',
-  
   },
 });

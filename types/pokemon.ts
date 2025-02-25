@@ -1,4 +1,5 @@
 // app/types/pokemon.ts
+// Again would be nice to get these from schema instead of writing them manually
 export interface Pokemon {
   key: string;
   sprite: string;

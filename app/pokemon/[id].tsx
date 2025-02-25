@@ -1,11 +1,21 @@
 // app/pokemon/[id].tsx
-import { View, Text, Image, StyleSheet, ActivityIndicator, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+  Pressable,
+} from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useQuery } from '@apollo/client';
 import { GET_POKEMON_DETAILS } from '@/graphql/gql-documents';
 import { PokemonDetails } from '@/types/pokemon';
 import getBackgroundColor from '@/utils/GetTypeColor';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { ArrowBackIcon } from '@/utils/icons/ArrowBackIcon';
 
 import { ChevronLeftIcon } from '@/utils/icons/ChevronLeftIcon';
@@ -15,13 +25,19 @@ import { textVariants } from '@/utils/styles/TextVariants';
 import { WeightIcon } from '@/utils/icons/WeightIcon';
 import { StraightenIcon } from '@/utils/icons/StraightenIcon';
 
-
 export default function PokemonDetailsScreen() {
   const { id } = useLocalSearchParams();
-  
+
+  // What about scalability, how would you approach it if we had more than one query? What if we had to use this query elsewhere?
+
   const { loading, error, data } = useQuery(GET_POKEMON_DETAILS, {
     variables: { pokemon: id },
+    // Setting policy to cache first to avoid flickering when navigating back
+    // Since pokemon don't really change, this allows to make the screen feel more responsive
+    fetchPolicy: 'cache-first',
   });
+  const { top } = useSafeAreaInsets();
+  console.log('TOP', top);
 
   if (loading || error || !data) {
     return (
@@ -33,19 +49,40 @@ export default function PokemonDetailsScreen() {
 
   const pokemon: PokemonDetails = data.getPokemon;
 
-  const backgroundColor = getBackgroundColor(pokemon.types.map(type => type.name))
+  const backgroundColor = getBackgroundColor(
+    pokemon.types.map((type) => type.name)
+  );
 
-  const StatBar = ({ label, value, backgroundColor }: { label: string; value: number; backgroundColor: string }) => {
-    const maxValue = 255; 
+  // Creating components during render is not a good practice
+  // It's better to create them outside of the render function at least
+  const StatBar = ({
+    label,
+    value,
+    backgroundColor,
+  }: {
+    label: string;
+    value: number;
+    backgroundColor: string;
+  }) => {
+    const maxValue = 255;
     const percentage = (value / maxValue) * 100;
-    
+
     return (
       <View style={styles.statRow}>
-        <Text style={[styles.statLabel, { color: backgroundColor }]}>{label}</Text>
+        <Text style={[styles.statLabel, { color: backgroundColor }]}>
+          {label}
+        </Text>
         <View style={styles.statDivider} />
-        <Text style={styles.statValue}>{value.toString().padStart(3, '0')}</Text>
+        <Text style={styles.statValue}>
+          {value.toString().padStart(3, '0')}
+        </Text>
         <View style={styles.statBarBackground}>
-          <View style={[styles.statBarFill, { width: `${percentage}%`, backgroundColor }]} />
+          <View
+            style={[
+              styles.statBarFill,
+              { width: `${percentage}%`, backgroundColor },
+            ]}
+          />
         </View>
       </View>
     );
@@ -56,20 +93,22 @@ export default function PokemonDetailsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <ArrowBackIcon  />
+          <ArrowBackIcon />
         </Pressable>
         <Text style={styles.title}>{pokemon.species}</Text>
-        <Text style={styles.number}>#{pokemon.num.toString().padStart(3, '0')}</Text>
+        <Text style={styles.number}>
+          #{pokemon.num.toString().padStart(3, '0')}
+        </Text>
       </View>
 
       <View style={styles.pokeBallBG}>
-      <PokeBallBGIcon size={228} />
+        <PokeBallBGIcon size={228} />
       </View>
 
       {/* Pokemon Image */}
       <View style={styles.imageContainer}>
-        <ChevronLeftIcon  style={styles.prevButton} />
-        <ChevronRightIcon  style={styles.nextButton} />
+        <ChevronLeftIcon style={styles.prevButton} />
+        <ChevronRightIcon style={styles.nextButton} />
         <Image
           source={{ uri: pokemon.sprite }}
           style={styles.image}
@@ -82,8 +121,8 @@ export default function PokemonDetailsScreen() {
         {/* Type Tags */}
         <View style={styles.typeContainer}>
           {pokemon.types.map((type) => (
-            <View 
-              key={type.name} 
+            <View
+              key={type.name}
               style={[styles.typeTag, { backgroundColor: backgroundColor }]}
             >
               <Text style={styles.typeText}>{type.name}</Text>
@@ -92,41 +131,76 @@ export default function PokemonDetailsScreen() {
         </View>
 
         {/* About Section */}
-        <Text style={[styles.sectionTitle, { color: backgroundColor }]}>About</Text>
+        <Text style={[styles.sectionTitle, { color: backgroundColor }]}>
+          About
+        </Text>
         <View style={styles.aboutContainer}>
           <View style={styles.aboutItem}>
             <View style={styles.weightContainer}>
-            <WeightIcon style={{marginRight: 8}} />
-            <Text style={styles.aboutValue}>{pokemon?.weight || '-'} kg</Text>
+              <WeightIcon style={{ marginRight: 8 }} />
+              <Text style={styles.aboutValue}>{pokemon?.weight || '-'} kg</Text>
             </View>
             <Text style={styles.aboutLabel}>Weight</Text>
           </View>
           <View style={styles.aboutDivider} />
           <View style={styles.aboutItem}>
             <View style={styles.weightContainer}>
-            <StraightenIcon style={{marginRight: 8}} />
-            <Text style={styles.aboutValue}>{pokemon?.height || '-'}</Text>
+              <StraightenIcon style={{ marginRight: 8 }} />
+              <Text style={styles.aboutValue}>{pokemon?.height || '-'}</Text>
             </View>
             <Text style={styles.aboutLabel}>Height</Text>
           </View>
           <View style={styles.aboutDivider} />
           <View style={styles.aboutItem}>
-            <Text style={styles.aboutValue}>{pokemon?.abilities?.first?.name || '-'}</Text>
+            <Text style={styles.aboutValue}>
+              {pokemon?.abilities?.first?.name || '-'}
+            </Text>
             <Text style={styles.aboutLabel}>Moves</Text>
           </View>
         </View>
 
-        <Text style={styles.description}>{pokemon.abilities.first.desc || '-'}</Text>
+        <Text style={styles.description}>
+          {pokemon.abilities.first.desc || '-'}
+          {/* Adding a huge text down here will break the UI */}
+          {/* AMDMAWDMKAWDKDAKLDAWKLADWKLMADKLMDAWKLMDAKLADWKLMDWAKLDAWKLMDAWKLMDAWKLMDAWKLMDAWKLMADWKLDAWKLMAWDKMADKMLADALKDWADKLADKWLDKMALWMKDLWLKMDWAMKLAWDKLMDWKLMADLKMW */}
+        </Text>
 
         {/* Base Stats */}
-        <Text style={[styles.sectionTitle, { color: backgroundColor }]}>Base Stats</Text>
+        {/* What would you use for translations? Any thoughts? */}
+        <Text style={[styles.sectionTitle, { color: backgroundColor }]}>
+          Base Stats
+        </Text>
         <View style={styles.statsContainer}>
-          <StatBar label="HP" value={pokemon.baseStats.hp} backgroundColor={backgroundColor} />
-          <StatBar label="ATK" value={pokemon.baseStats.attack} backgroundColor={backgroundColor} />
-          <StatBar label="DEF" value={pokemon.baseStats.defense} backgroundColor={backgroundColor} />
-          <StatBar label="SATK" value={pokemon.baseStats.specialattack} backgroundColor={backgroundColor} />
-          <StatBar label="SDEF" value={pokemon.baseStats.specialdefense} backgroundColor={backgroundColor} />
-          <StatBar label="SPD" value={pokemon.baseStats.speed} backgroundColor={backgroundColor} />
+          <StatBar
+            label="HP"
+            value={pokemon.baseStats.hp}
+            backgroundColor={backgroundColor}
+          />
+          <StatBar
+            label="ATK"
+            value={pokemon.baseStats.attack}
+            backgroundColor={backgroundColor}
+          />
+          <StatBar
+            label="DEF"
+            value={pokemon.baseStats.defense}
+            backgroundColor={backgroundColor}
+          />
+          <StatBar
+            label="SATK"
+            value={pokemon.baseStats.specialattack}
+            backgroundColor={backgroundColor}
+          />
+          <StatBar
+            label="SDEF"
+            value={pokemon.baseStats.specialdefense}
+            backgroundColor={backgroundColor}
+          />
+          <StatBar
+            label="SPD"
+            value={pokemon.baseStats.speed}
+            backgroundColor={backgroundColor}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -159,18 +233,18 @@ const styles = StyleSheet.create({
     opacity: 0.1,
     position: 'absolute',
     top: 8,
-    right:8,
+    right: 8,
     bottom: 0,
-    zIndex:0,
+    zIndex: 0,
   },
 
   imageContainer: {
-    position: 'absolute', 
-    top: '15%', 
+    position: 'absolute',
+    top: '15%',
     left: 0,
     right: 0,
     alignItems: 'center',
-    zIndex: 10, 
+    zIndex: 10,
   },
   image: {
     width: 200,
@@ -202,7 +276,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 20,
     marginTop: 190,
-
   },
   typeContainer: {
     flexDirection: 'row',
@@ -217,15 +290,15 @@ const styles = StyleSheet.create({
   },
   typeText: {
     fontSize: 10,
-    fontFamily: "poppins-bold",
+    fontFamily: 'poppins-bold',
     lineHeight: 16,
-    color: "#fff",
+    color: '#fff',
   },
   sectionTitle: {
     fontSize: 14,
-    fontFamily: "poppins-bold",
+    fontFamily: 'poppins-bold',
     lineHeight: 16,
-    color: "#fff",
+    color: '#fff',
     alignSelf: 'center',
     marginBottom: 16,
   },
@@ -240,7 +313,7 @@ const styles = StyleSheet.create({
   },
 
   weightContainer: {
-  flexDirection: 'row',
+    flexDirection: 'row',
   },
   aboutValue: {
     fontSize: 14,
@@ -256,7 +329,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0E0E0',
   },
   statDivider: {
-    
     marginLeft: 8,
     marginRight: 8,
     height: '100%',
@@ -268,7 +340,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#1D1D1D',
     marginBottom: 24,
-    textAlign: 'justify'
+    textAlign: 'justify',
   },
   statsContainer: {
     gap: 8,
