@@ -1,31 +1,34 @@
-import { useQuery } from "@apollo/client";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useQuery } from '@apollo/client';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useState, useCallback, useMemo, useRef } from 'react';
 
-import { GET_POKEMONS } from "@/graphql/gql-documents";
-import { Pokemon } from "@/types/pokemon";
+import { GET_POKEMONS } from '@/graphql/gql-documents';
+import { Pokemon } from '@/types/pokemon';
 
-import { SafeAreaView } from "react-native-safe-area-context";
-import { PokemonListSkeleton } from "@/components/PokemonSkeleton";
-import { PokeBallIcon } from "@/utils/icons/PokeBallIcon";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { PokemonListSkeleton } from '@/components/PokemonSkeleton';
+import { PokeBallIcon } from '@/utils/icons/PokeBallIcon';
 
 import { debounce } from 'lodash';
-import { SearchBar } from "@/components/SearchBar";
-import { PokemonList } from "@/components/PokemonList";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { SortIcon } from "@/utils/icons/SortIcon";
-import { TagIcon } from "@/utils/icons/TagIcon";
-import { LetterIcon } from "@/utils/icons/LetterIcon";
-import { SortComponent } from "@/components/SortComponent";
-import { textVariants } from "@/utils/styles/TextVariants";
+import { SearchBar } from '@/components/SearchBar';
+import { PokemonList } from '@/components/PokemonList';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { SortIcon } from '@/utils/icons/SortIcon';
+import { TagIcon } from '@/utils/icons/TagIcon';
+import { LetterIcon } from '@/utils/icons/LetterIcon';
+import { SortComponent } from '@/components/SortComponent';
+import { textVariants } from '@/utils/styles/TextVariants';
 
 const ITEMS_PER_PAGE = 21;
 
 type SortField = 'number' | 'name' | null;
 type SortOrder = 'asc' | 'desc';
 
-
 export default function HomeScreen() {
+  // Whenever the  the state is updated, the component will re-render.
+  // This is not a problem in this case since the component is not too complex
+  // but it could be a problem if the component is more complex.
+  // For things like these it's better to
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [searchQuery, setSearchQuery] = useState('');
@@ -47,10 +50,13 @@ export default function HomeScreen() {
     setIsBottomSheetOpen(index >= 0);
   }, []);
 
+  // debounce function is missing cleanup, which could lead to memory leaks
   const handleSearch = debounce((query: string) => {
     setSearchQuery(query);
   }, 300);
 
+  // Probably would be better to just move this outside of render
+  // and use a switch statement instead of if/else
   const SortIconComponent = useMemo(() => {
     if (sortField === 'name') {
       return <LetterIcon />;
@@ -73,12 +79,13 @@ export default function HomeScreen() {
   const filteredAndSortedPokemon = useMemo(() => {
     if (!data?.getAllPokemon) return [];
 
-    let pokemonList = [...data.getAllPokemon]
-      .filter((pokemon: Pokemon) => {
-        const searchLower = searchQuery.toLowerCase();
-        return pokemon.species.toLowerCase().includes(searchLower) ||
-          pokemon.num.toString().includes(searchQuery);
-      });
+    let pokemonList = [...data.getAllPokemon].filter((pokemon: Pokemon) => {
+      const searchLower = searchQuery.toLowerCase();
+      return (
+        pokemon.species.toLowerCase().includes(searchLower) ||
+        pokemon.num.toString().includes(searchQuery)
+      );
+    });
 
     if (sortField) {
       pokemonList.sort((a: Pokemon, b: Pokemon) => {
@@ -140,11 +147,35 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
+        {/* Would probably be better to utilise the ListEmptyComponent inside the list 
+        instead of rendering the list itself when data is there. This might lead to some unwanted 
+        jumps in data. 
+        Better way was to do the following inside PokemonList.tsx:
 
+              ListEmptyComponent={() => {
+                if (loading) {
+                  return <PokemonListSkeleton />;
+                }
+                return (
+                  <View>
+                    <Text style={{ fontFamily: 'poppins', textAlign: 'center' }}>
+                      No Pokemon Found
+                    </Text>
+                  </View>
+                );
+              }}
+      
+        */}
+        {/* If data is initially undefined and loading is also false, there can be some unwanted behaviour */}
         {loading && !data ? (
           <PokemonListSkeleton />
         ) : (
-          <PokemonList data={filteredAndSortedPokemon} loading={loading} onLoadMore={loadMore} onRefresh={onRefresh} />
+          <PokemonList
+            data={filteredAndSortedPokemon}
+            loading={loading}
+            onLoadMore={loadMore}
+            onRefresh={onRefresh}
+          />
         )}
       </View>
 
@@ -183,7 +214,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     ...textVariants.heading24,
-    marginLeft: 16
+    marginLeft: 16,
   },
   searchContainer: {
     flexDirection: 'row',

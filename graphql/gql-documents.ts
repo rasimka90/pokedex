@@ -1,4 +1,8 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client';
+
+// Would be cool to use codegen to get types for these queries
+// As of now for example if you want to get the type of the data returned by GET_POKEMONS
+// You would have to manually write the types
 
 export const GET_POKEMONS = gql`
   query GetPokemons($offset: Int!, $take: Int!) {

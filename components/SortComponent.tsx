@@ -29,16 +29,14 @@ export const SortComponent: React.FC<SortComponentProps> = ({
       <Text style={styles.title}>Sort by:</Text>
       <View style={styles.optionsContainer}>
         {/* No Sort Option */}
-        <Pressable 
-          onPress={() => setSortField(null)} 
-          style={styles.option}
-        >
+        <Pressable onPress={() => setSortField(null)} style={styles.option}>
           <RadioButton selected={sortField === null} />
           <Text>No Sort</Text>
         </Pressable>
 
         {/* Sort by Number */}
-        <Pressable 
+        {/* This would probably be cool if it was a separate components */}
+        <Pressable
           onPress={() => {
             setSortField('number');
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -46,11 +44,14 @@ export const SortComponent: React.FC<SortComponentProps> = ({
           style={styles.option}
         >
           <RadioButton selected={sortField === 'number'} />
-          <Text>Number {sortField === 'number' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</Text>
+          <Text>
+            Number{' '}
+            {sortField === 'number' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+          </Text>
         </Pressable>
 
         {/* Sort by Name */}
-        <Pressable 
+        <Pressable
           onPress={() => {
             setSortField('name');
             setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -58,7 +59,9 @@ export const SortComponent: React.FC<SortComponentProps> = ({
           style={styles.option}
         >
           <RadioButton selected={sortField === 'name'} />
-          <Text>Name {sortField === 'name' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}</Text>
+          <Text>
+            Name {sortField === 'name' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+          </Text>
         </Pressable>
       </View>
     </BottomSheetView>
